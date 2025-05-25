@@ -180,6 +180,34 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+func findSlackChannelConfigurationByName(ctx context.Context, conn *chatbot.Client, chat_configuration_arn string) (*awstypes.SlackChannelConfiguration, error) {
+	input := &chatbot.GetSlackChannelConfigurationInput{
+		ChatConfigurationArn: aws.String(chat_configuration_arn),
+	}
+
+	for {
+		output, error := conn.DescribeSlackChannelConfigurations(ctx, input)
+		if error != nil {
+			return nil, error
+		}
+
+		for _, configuration := range output.SlackChannelConfiguration {
+			if aws.ToString(configuration.ChatConfigurationArn) == chat_configuration_arn {
+				return &configuration, nil
+			}
+		}
+
+		if output.NextToken == nil {
+			break
+		}
+
+		input.NextToken = output.NextToken
+	}
+
+	// If we are here, then we need to return an error that the configuration was not found.
+	return nil, create.Error(names.Chatbot, "missing", SDNameSlackChannelConfiguration, nil)
+}
+
 // TIP: ==== DATA STRUCTURES ====
 // With Terraform Plugin-Framework configurations are deserialized into
 // Go types, providing type safety without the need for type assertions.
