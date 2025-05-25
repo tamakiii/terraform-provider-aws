@@ -146,6 +146,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	}
 
 	// TIP: -- 5. Set the tags
+	data.ChatConfigurationArn = flex.StringToFramework(ctx, out.ChatConfigurationArn)
 
 	// TIP: -- 6. Set the state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
