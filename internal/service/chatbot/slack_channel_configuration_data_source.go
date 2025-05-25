@@ -174,7 +174,7 @@ func findSlackChannelConfigurationByArn(ctx context.Context, conn *chatbot.Clien
 	}
 
 	// If we are here, then we need to return an error that the configuration was not found.
-	return nil, create.Error(names.Chatbot, "missing", DSNameSlackChannelConfiguration, nil)
+	return nil, create.Error(names.Chatbot, "missing", DSNameSlackChannelConfiguration, chat_configuration_arn, nil)
 }
 
 // TIP: ==== DATA STRUCTURES ====
