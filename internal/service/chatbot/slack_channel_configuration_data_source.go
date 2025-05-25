@@ -38,15 +38,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/chatbot"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/chatbot/types"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/chatbot"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-provider-aws/internal/create"
 	"github.com/hashicorp/terraform-provider-aws/internal/framework"
 	"github.com/hashicorp/terraform-provider-aws/internal/framework/flex"
-	fwtypes "github.com/hashicorp/terraform-provider-aws/internal/framework/types"
 	"github.com/hashicorp/terraform-provider-aws/names"
 )
 
@@ -129,10 +126,10 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	}
 
 	// TIP: -- 3. Get information about a resource from AWS
-	out, err := findSlackChannelConfigurationByArn(ctx, conn, data.Name.ValueString())
+	out, err := findSlackChannelConfigurationByArn(ctx, conn, data.ChatConfigurationArn.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
-			create.ProblemStandardMessage(names.Chatbot, create.ErrActionReading, DSNameSlackChannelConfiguration, data.Name.String(), err),
+			create.ProblemStandardMessage(names.Chatbot, create.ErrActionReading, DSNameSlackChannelConfiguration, data.ChatConfigurationArn.String(), err),
 			err.Error(),
 		)
 		return
@@ -153,7 +150,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 }
 
 func findSlackChannelConfigurationByArn(ctx context.Context, conn *chatbot.Client, chat_configuration_arn string) (*awstypes.SlackChannelConfiguration, error) {
-	input := &chatbot.GetSlackChannelConfigurationInput{
+	input := &chatbot.DescribeSlackChannelConfigurationsInput{
 		ChatConfigurationArn: aws.String(chat_configuration_arn),
 	}
 
@@ -163,7 +160,7 @@ func findSlackChannelConfigurationByArn(ctx context.Context, conn *chatbot.Clien
 			return nil, error
 		}
 
-		for _, configuration := range output.SlackChannelConfiguration {
+		for _, configuration := range output.SlackChannelConfigurations {
 			if aws.ToString(configuration.ChatConfigurationArn) == chat_configuration_arn {
 				return &configuration, nil
 			}
@@ -177,7 +174,7 @@ func findSlackChannelConfigurationByArn(ctx context.Context, conn *chatbot.Clien
 	}
 
 	// If we are here, then we need to return an error that the configuration was not found.
-	return nil, create.Error(names.Chatbot, "missing", SDNameSlackChannelConfiguration, nil)
+	return nil, create.Error(names.Chatbot, "missing", DSNameSlackChannelConfiguration, nil)
 }
 
 // TIP: ==== DATA STRUCTURES ====
