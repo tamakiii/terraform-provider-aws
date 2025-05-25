@@ -97,7 +97,9 @@ type dataSourceSlackChannelConfiguration struct {
 func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"chat_configuration_arn": framework.ARNAttributeComputedOnly(), // TODO:
+			"chat_configuration_arn": schema.StringAttribute{
+				Required: true,
+			},
 		},
 	}
 }
