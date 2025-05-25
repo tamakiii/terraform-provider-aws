@@ -100,36 +100,7 @@ type dataSourceSlackChannelConfiguration struct {
 func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			names.AttrARN: framework.ARNAttributeComputedOnly(),
-			names.AttrDescription: schema.StringAttribute{
-				Computed: true,
-			},
-			names.AttrID: framework.IDAttribute(),
-			names.AttrName: schema.StringAttribute{
-				Required: true,
-			},
-			names.AttrType: schema.StringAttribute{
-				Computed: true,
-			},
-		},
-		Blocks: map[string]schema.Block{
-			"complex_argument": schema.ListNestedBlock{
-				// TIP: ==== CUSTOM TYPES ====
-				// Use a custom type to identify the model type of the tested object
-				CustomType: fwtypes.NewListNestedObjectTypeOf[complexArgumentModel](ctx),
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						// TIP: Attributes that are required on a corresponding resource will be
-						// computed on the data source (unless required as part of the search criteria).
-						"nested_required": schema.StringAttribute{
-							Computed: true,
-						},
-						"nested_computed": schema.StringAttribute{
-							Computed: true,
-						},
-					},
-				},
-			},
+			"chat_configuration_arn": framework.ARNAttributeComputedOnly(), // TODO:
 		},
 	}
 }
