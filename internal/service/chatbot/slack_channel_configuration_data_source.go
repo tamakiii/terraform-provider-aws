@@ -192,12 +192,15 @@ func findSlackChannelConfigurationByName(ctx context.Context, conn *chatbot.Clie
 // See more:
 // https://developer.hashicorp.com/terraform/plugin/framework/handling-data/accessing-values
 type dataSourceSlackChannelConfigurationModel struct {
-	ARN             types.String                                          `tfsdk:"arn"`
-	ComplexArgument fwtypes.ListNestedObjectValueOf[complexArgumentModel] `tfsdk:"complex_argument"`
-	Description     types.String                                          `tfsdk:"description"`
-	ID              types.String                                          `tfsdk:"id"`
-	Name            types.String                                          `tfsdk:"name"`
-	Type            types.String                                          `tfsdk:"type"`
+	ChatConfigurationArn      types.String `tfsdk:"chat_configuration_arn"`
+	SlackTeamName             types.String `tfsdk:"slack_team_name"`
+	SlackChannelId            types.String `tfsdk:"slack_channel_id"`
+	SlackChannelName          types.String `tfsdk:"slack_channel_name"`
+	IamRoleArn                types.String `tfsdk:"iam_role_arn"`
+	ConfigurationName         types.String `tfsdk:"configuration_name"`
+	LoggingLevel              types.String `tfsdk:"logging_level"`
+	UserAuthorizationRequired types.Bool   `tfsdk:"user_authorization_required"`
+	State                     types.String `tfsdk:"state"`
 }
 
 type complexArgumentModel struct {
