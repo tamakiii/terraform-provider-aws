@@ -129,7 +129,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	}
 
 	// TIP: -- 3. Get information about a resource from AWS
-	out, err := findSlackChannelConfigurationByName(ctx, conn, data.Name.ValueString())
+	out, err := findSlackChannelConfigurationByArn(ctx, conn, data.Name.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			create.ProblemStandardMessage(names.Chatbot, create.ErrActionReading, DSNameSlackChannelConfiguration, data.Name.String(), err),
@@ -152,7 +152,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func findSlackChannelConfigurationByName(ctx context.Context, conn *chatbot.Client, chat_configuration_arn string) (*awstypes.SlackChannelConfiguration, error) {
+func findSlackChannelConfigurationByArn(ctx context.Context, conn *chatbot.Client, chat_configuration_arn string) (*awstypes.SlackChannelConfiguration, error) {
 	input := &chatbot.GetSlackChannelConfigurationInput{
 		ChatConfigurationArn: aws.String(chat_configuration_arn),
 	}
