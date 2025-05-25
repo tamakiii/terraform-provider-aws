@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 package chatbot
+
 // **PLEASE DELETE THIS AND ALL TIP COMMENTS BEFORE SUBMITTING A PR FOR REVIEW!**
 //
 // TIP: ==== INTRODUCTION ====
@@ -73,7 +74,6 @@ type dataSourceSlackChannelConfiguration struct {
 	framework.DataSourceWithConfigure
 }
 
-
 // TIP: ==== SCHEMA ====
 // In the schema, add each of the arguments and attributes in snake
 // case (e.g., delete_automated_backups).
@@ -119,7 +119,7 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 				CustomType: fwtypes.NewListNestedObjectTypeOf[complexArgumentModel](ctx),
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
-						// TIP: Attributes that are required on a corresponding resource will be 
+						// TIP: Attributes that are required on a corresponding resource will be
 						// computed on the data source (unless required as part of the search criteria).
 						"nested_required": schema.StringAttribute{
 							Computed: true,
@@ -133,6 +133,7 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 		},
 	}
 }
+
 // TIP: ==== ASSIGN CRUD METHODS ====
 // Data sources only have a read method.
 func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -148,14 +149,14 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	// 6. Set the state
 	// TIP: -- 1. Get a client connection to the relevant service
 	conn := d.Meta().ChatbotClient(ctx)
-	
+
 	// TIP: -- 2. Fetch the config
 	var data dataSourceSlackChannelConfigurationModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	
+
 	// TIP: -- 3. Get information about a resource from AWS
 	out, err := findSlackChannelConfigurationByName(ctx, conn, data.Name.ValueString())
 	if err != nil {
@@ -179,14 +180,13 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-
 // TIP: ==== DATA STRUCTURES ====
 // With Terraform Plugin-Framework configurations are deserialized into
 // Go types, providing type safety without the need for type assertions.
 // These structs should match the schema definition exactly, and the `tfsdk`
-// tag value should match the attribute name. 
+// tag value should match the attribute name.
 //
-// Nested objects are represented in their own data struct. These will 
+// Nested objects are represented in their own data struct. These will
 // also have a corresponding attribute type mapping for use inside flex
 // functions.
 //
