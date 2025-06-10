@@ -53,6 +53,7 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 			},
 			"logging_level": schema.StringAttribute{
 				Description: "Specifies the logging level for this configuration.",
+				CustomType:  fwtypes.StringEnumType[loggingLevel](),
 				Computed:    true,
 			},
 			"slack_channel_id": schema.StringAttribute{
@@ -144,7 +145,7 @@ type dataSourceSlackChannelConfigurationModel struct {
 	ChatConfigurationArn      fwtypes.ARN                      `tfsdk:"chat_configuration_arn"`
 	ConfigurationName         types.String                     `tfsdk:"configuration_name"`
 	IamRoleArn                types.String                     `tfsdk:"iam_role_arn"`
-	LoggingLevel              types.String                     `tfsdk:"logging_level"`
+	LoggingLevel              fwtypes.StringEnum[loggingLevel] `tfsdk:"logging_level"`
 	SlackChannelId            types.String                     `tfsdk:"slack_channel_id"`
 	SlackChannelName          types.String                     `tfsdk:"slack_channel_name"`
 	SlackTeamId               types.String                     `tfsdk:"slack_team_id"`
