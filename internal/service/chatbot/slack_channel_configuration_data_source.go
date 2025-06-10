@@ -81,11 +81,7 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 				Description: "State of the configuration.",
 				Computed:    true,
 			},
-			names.AttrTags: schema.MapAttribute{
-				Description: "Map of tags assigned to the resource.",
-				ElementType: types.StringType,
-				Computed:    true,
-			},
+			names.AttrTags:    tftags.TagsAttributeComputedOnly(),
 			names.AttrTagsAll: tftags.TagsAttributeComputedOnly(),
 			"user_authorization_required": schema.BoolAttribute{
 				Description: "Enables use of a user role requirement in your chat configuration.",
