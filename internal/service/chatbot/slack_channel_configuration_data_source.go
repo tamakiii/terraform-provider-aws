@@ -119,7 +119,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 
 	// Set tags if present
 	if len(out.Tags) > 0 {
-		data.Tags = flex.FlattenFrameworkStringValueMap(ctx, chatbotTagsToMap(out.Tags))
+		data.Tags = flex.FlattenFrameworkStringValueMap(ctx, keyValueTags(ctx, out.Tags).Map())
 	} else {
 		data.Tags = types.MapNull(types.StringType)
 	}
@@ -152,15 +152,6 @@ func findSlackChannelConfigurationByArn(ctx context.Context, conn *chatbot.Clien
 	}
 
 	return nil, tfresource.NewEmptyResultError(input)
-}
-
-// chatbotTagsToMap converts AWS Chatbot Tag types to a map[string]string for Terraform state.
-func chatbotTagsToMap(tags []awstypes.Tag) map[string]string {
-	m := make(map[string]string, len(tags))
-	for _, tag := range tags {
-		m[aws.ToString(tag.TagKey)] = aws.ToString(tag.TagValue)
-	}
-	return m
 }
 
 type dataSourceSlackChannelConfigurationModel struct {
