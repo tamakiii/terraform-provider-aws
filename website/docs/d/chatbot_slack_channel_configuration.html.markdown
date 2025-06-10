@@ -40,4 +40,4 @@ This data source exports the following attributes in addition to the arguments a
 * `sns_topic_arns` - ARNs of the SNS topics that deliver notifications to AWS Chatbot.
 * `state` - State of the configuration.
 * `tags` - Map of tags assigned to the resource.
-* `user_authorization_required` - Whether use of a user role requirement is enabled in your chat configuration.
+* `user_authorization_required` - Enables use of a user role requirement in your chat configuration.
