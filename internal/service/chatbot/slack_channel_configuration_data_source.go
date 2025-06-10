@@ -18,6 +18,7 @@ import (
 	"github.com/hashicorp/terraform-provider-aws/internal/create"
 	"github.com/hashicorp/terraform-provider-aws/internal/framework"
 	"github.com/hashicorp/terraform-provider-aws/internal/framework/flex"
+	"github.com/hashicorp/terraform-provider-aws/internal/tfresource"
 	"github.com/hashicorp/terraform-provider-aws/names"
 )
 
@@ -128,6 +129,15 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	// Set tags if present
 	if len(out.Tags) > 0 {
 		data.Tags = flex.FlattenFrameworkStringValueMap(ctx, chatbotTagsToMap(out.Tags))
+	} else {
+		data.Tags = types.MapNull(types.StringType)
+	}
+
+	// Set SNS topic ARNs if present
+	if len(out.SnsTopicArns) > 0 {
+		data.SnsTopicArns = flex.FlattenFrameworkStringValueSetLegacy(ctx, out.SnsTopicArns)
+	} else {
+		data.SnsTopicArns = types.SetNull(types.StringType)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -150,9 +160,10 @@ func findSlackChannelConfigurationByArn(ctx context.Context, conn *chatbot.Clien
 		}
 	}
 
-	return nil, create.Error(names.Chatbot, create.ErrActionReading, DSNameSlackChannelConfiguration, chatConfigurationArn, nil)
+	return nil, tfresource.NewEmptyResultError(input)
 }
 
+// chatbotTagsToMap converts AWS Chatbot Tag types to a map[string]string for Terraform state.
 func chatbotTagsToMap(tags []awstypes.Tag) map[string]string {
 	m := make(map[string]string, len(tags))
 	for _, tag := range tags {

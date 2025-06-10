@@ -23,7 +23,7 @@ func TestAccChatbotSlackChannelConfigurationDataSource_basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.PreCheck(ctx, t)
-			acctest.PreCheckPartitionHasService(t, names.ChatbotEndpointID)
+			acctest.PreCheckPartitionHasService(t, names.Chatbot)
 			testAccPreCheck(ctx, t)
 		},
 		ErrorCheck:               acctest.ErrorCheck(t, names.ChatbotServiceID),
@@ -55,7 +55,7 @@ func TestAccChatbotSlackChannelConfigurationDataSource_notFound(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.PreCheck(ctx, t)
-			acctest.PreCheckPartitionHasService(t, names.ChatbotEndpointID)
+			acctest.PreCheckPartitionHasService(t, names.Chatbot)
 		},
 		ErrorCheck:               acctest.ErrorCheck(t, names.ChatbotServiceID),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories,
@@ -69,7 +69,7 @@ func TestAccChatbotSlackChannelConfigurationDataSource_notFound(t *testing.T) {
 }
 
 func testAccSlackChannelConfigurationDataSourceConfig_basic(rName string) string {
-	return acctest.ConfigCompose(testAccSlackChannelConfigurationConfig_basic(rName), fmt.Sprintf(`
+	return acctest.ConfigCompose(testAccSlackChannelConfigurationConfig_basic(rName, "C07EZ1NHXEZ", "T07EA7JMZ"), fmt.Sprintf(`
 data "aws_chatbot_slack_channel_configuration" "test" {
   chat_configuration_arn = aws_chatbot_slack_channel_configuration.test.chat_configuration_arn
 }

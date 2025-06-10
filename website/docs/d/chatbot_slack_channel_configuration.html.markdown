@@ -5,14 +5,6 @@ page_title: "AWS: aws_chatbot_slack_channel_configuration"
 description: |-
   Terraform data source for managing an AWS Chatbot Slack Channel Configuration.
 ---
-<!---
-TIP: A few guiding principles for writing documentation:
-1. Use simple language while avoiding jargon and figures of speech.
-2. Focus on brevity and clarity to keep a reader's attention.
-3. Use active voice and present tense whenever you can.
-4. Document your feature as it exists now; do not mention the future or past if you can help it.
-5. Use accessible and inclusive language.
---->
 
 # Data Source: aws_chatbot_slack_channel_configuration
 
@@ -24,6 +16,7 @@ Terraform data source for managing an AWS Chatbot Slack Channel Configuration.
 
 ```terraform
 data "aws_chatbot_slack_channel_configuration" "example" {
+  chat_configuration_arn = "arn:aws:chatbot::123456789012:chat-configuration/slack-channel/example"
 }
 ```
 
@@ -31,15 +24,20 @@ data "aws_chatbot_slack_channel_configuration" "example" {
 
 The following arguments are required:
 
-* `example_arg` - (Required) Concise argument description. Do not begin the description with "An", "The", "Defines", "Indicates", or "Specifies," as these are verbose. In other words, "Indicates the amount of storage," can be rewritten as "Amount of storage," without losing any information.
-
-The following arguments are optional:
-
-* `optional_arg` - (Optional) Concise argument description. Do not begin the description with "An", "The", "Defines", "Indicates", or "Specifies," as these are verbose. In other words, "Indicates the amount of storage," can be rewritten as "Amount of storage," without losing any information.
+* `chat_configuration_arn` - (Required) ARN of the Slack channel configuration.
 
 ## Attribute Reference
 
 This data source exports the following attributes in addition to the arguments above:
 
-* `arn` - ARN of the Slack Channel Configuration. Do not begin the description with "An", "The", "Defines", "Indicates", or "Specifies," as these are verbose. In other words, "Indicates the amount of storage," can be rewritten as "Amount of storage," without losing any information.
-* `example_attribute` - Concise description. Do not begin the description with "An", "The", "Defines", "Indicates", or "Specifies," as these are verbose. In other words, "Indicates the amount of storage," can be rewritten as "Amount of storage," without losing any information.
+* `configuration_name` - Name of the Slack channel configuration.
+* `iam_role_arn` - ARN of the IAM role that defines the permissions for AWS Chatbot.
+* `logging_level` - Logging level for this configuration.
+* `slack_channel_id` - ID of the Slack channel.
+* `slack_channel_name` - Name of the Slack channel.
+* `slack_team_id` - ID of the Slack workspace authorized with AWS Chatbot.
+* `slack_team_name` - Name of the Slack workspace.
+* `sns_topic_arns` - ARNs of the SNS topics that deliver notifications to AWS Chatbot.
+* `state` - State of the configuration.
+* `tags` - Map of tags assigned to the resource.
+* `user_authorization_required` - Whether use of a user role requirement is enabled in your chat configuration.
