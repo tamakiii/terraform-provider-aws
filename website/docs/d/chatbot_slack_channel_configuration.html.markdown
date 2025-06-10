@@ -31,12 +31,12 @@ The following arguments are required:
 This data source exports the following attributes in addition to the arguments above:
 
 * `configuration_name` - Name of the Slack channel configuration.
-* `iam_role_arn` - ARN of the IAM role that defines the permissions for AWS Chatbot.
-* `logging_level` - Logging level for this configuration.
-* `slack_channel_id` - ID of the Slack channel.
+* `iam_role_arn` - User-defined role that AWS Chatbot assumes. This is not the service-linked role.
+* `logging_level` - Logging levels include `ERROR`, `INFO`, or `NONE`.
+* `slack_channel_id` - ID of the Slack channel. For example, `C07EZ1ABC23`.
 * `slack_channel_name` - Name of the Slack channel.
-* `slack_team_id` - ID of the Slack workspace authorized with AWS Chatbot.
-* `slack_team_name` - Name of the Slack workspace.
+* `slack_team_id` - ID of the Slack workspace authorized with AWS Chatbot. For example, `T07EA123LEP`.
+* `slack_team_name` - Name of the Slack team.
 * `sns_topic_arns` - ARNs of the SNS topics that deliver notifications to AWS Chatbot.
 * `state` - State of the configuration.
 * `tags` - Map of tags assigned to the resource.
