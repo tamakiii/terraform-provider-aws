@@ -22,6 +22,7 @@ import (
 )
 
 // @FrameworkDataSource("aws_chatbot_slack_channel_configuration", name="Slack Channel Configuration")
+// @Tags(identifierAttribute="chat_configuration_arn")
 func newDataSourceSlackChannelConfiguration(context.Context) (datasource.DataSourceWithConfigure, error) {
 	return &dataSourceSlackChannelConfiguration{}, nil
 }
@@ -115,19 +116,6 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	// Convert tags from AWS SDK format to tftags.Map
-	tagMap := make(map[string]*string)
-	for _, tag := range out.Tags {
-		if tag.TagKey != nil && tag.TagValue != nil {
-			tagMap[*tag.TagKey] = tag.TagValue
-		}
-	}
-	keyValueTags := tftags.New(ctx, tagMap)
-	stringMap := keyValueTags.Map()
-	frameworkMap := flex.FlattenFrameworkStringValueMapLegacy(ctx, stringMap)
-	data.Tags = tftags.NewMapFromMapValue(frameworkMap)
-	data.TagsAll = tftags.NewMapFromMapValue(frameworkMap)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

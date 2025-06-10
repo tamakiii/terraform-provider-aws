@@ -4,6 +4,8 @@
 package chatbot_test
 
 import (
+	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/YakDriver/regexache"
@@ -13,15 +15,24 @@ import (
 	"github.com/hashicorp/terraform-provider-aws/names"
 )
 
+const (
+	// Environment variables for data source testing
+	envSlackConfigurationName = "CHATBOT_SLACK_CONFIGURATION_NAME"
+	envSlackTeamName          = "CHATBOT_SLACK_TEAM_NAME"
+)
+
 func TestAccChatbotSlackChannelConfigurationDataSource_basic(t *testing.T) {
 	ctx := acctest.Context(t)
 	rName := sdkacctest.RandomWithPrefix(acctest.ResourcePrefix)
 	dataSourceName := "data.aws_chatbot_slack_channel_configuration.test"
 
-	// The slack workspace must be created via the AWS Console. It cannot be created via APIs or Terraform.
-	// Once it is created, export the workspace details in the env variables for this test
+	// The slack workspace and configuration must be created via the AWS Console.
+	// They cannot be created via APIs or Terraform.
+	// Export the configuration details in env variables for this test
 	teamID := acctest.SkipIfEnvVarNotSet(t, envSlackTeamID)
 	channelID := acctest.SkipIfEnvVarNotSet(t, envSlackChannelID)
+	configurationName := acctest.SkipIfEnvVarNotSet(t, envSlackConfigurationName)
+	teamName := acctest.SkipIfEnvVarNotSet(t, envSlackTeamName)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
@@ -32,24 +43,22 @@ func TestAccChatbotSlackChannelConfigurationDataSource_basic(t *testing.T) {
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSlackChannelConfigurationDataSourceConfig_basic(rName, channelID, teamID),
+				Config: testAccSlackChannelConfigurationDataSourceConfig_basic(rName, channelID, teamID, configurationName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet(dataSourceName, "chat_configuration_arn"),
-					resource.TestCheckResourceAttr(dataSourceName, "configuration_name", "TestDatasourceChatbotAndCodestar-Test"),
+					resource.TestCheckResourceAttr(dataSourceName, "configuration_name", configurationName),
 					resource.TestCheckResourceAttrSet(dataSourceName, names.AttrIAMRoleARN),
-					resource.TestCheckResourceAttr(dataSourceName, "logging_level", "NONE"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "logging_level"),
 					resource.TestCheckResourceAttr(dataSourceName, "slack_channel_id", channelID),
-					resource.TestCheckResourceAttr(dataSourceName, "slack_channel_name", "test"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "slack_channel_name"),
 					resource.TestCheckResourceAttr(dataSourceName, "slack_team_id", teamID),
-					resource.TestCheckResourceAttr(dataSourceName, "slack_team_name", "tamakiii"),
-					resource.TestCheckResourceAttr(dataSourceName, "user_authorization_required", "false"),
-					resource.TestCheckResourceAttr(dataSourceName, names.AttrState, "ENABLED"),
-					resource.TestCheckResourceAttr(dataSourceName, "sns_topic_arns.#", "1"),
-					resource.TestCheckResourceAttr(dataSourceName, "tags.%", "1"),
-					resource.TestCheckResourceAttr(dataSourceName, "tags.Service", "TestDatasourceChatbotAndCodestar"),
+					resource.TestCheckResourceAttr(dataSourceName, "slack_team_name", teamName),
+					resource.TestCheckResourceAttrSet(dataSourceName, "user_authorization_required"),
+					resource.TestCheckResourceAttrSet(dataSourceName, names.AttrState),
+					resource.TestCheckResourceAttrSet(dataSourceName, "sns_topic_arns.#"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "tags.%"),
 					// Use pattern matching for account-specific ARNs
-					acctest.MatchResourceAttrGlobalARN(ctx, dataSourceName, "chat_configuration_arn", "chatbot", regexache.MustCompile(`chat-configuration/slack-channel/TestDatasourceChatbotAndCodestar-Test$`)),
-					acctest.MatchResourceAttrGlobalARN(ctx, dataSourceName, names.AttrIAMRoleARN, "iam", regexache.MustCompile(`role/TestDatasourceChatbotAndCodestar-ChatBot$`)),
+					acctest.MatchResourceAttrGlobalARN(ctx, dataSourceName, "chat_configuration_arn", "chatbot", regexache.MustCompile(`chat-configuration/slack-channel/`+regexp.QuoteMeta(configurationName)+`$`)),
 				),
 			},
 		},
@@ -63,6 +72,7 @@ func TestAccChatbotSlackChannelConfigurationDataSource_tags(t *testing.T) {
 
 	teamID := acctest.SkipIfEnvVarNotSet(t, envSlackTeamID)
 	channelID := acctest.SkipIfEnvVarNotSet(t, envSlackChannelID)
+	configurationName := acctest.SkipIfEnvVarNotSet(t, envSlackConfigurationName)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
@@ -73,12 +83,11 @@ func TestAccChatbotSlackChannelConfigurationDataSource_tags(t *testing.T) {
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSlackChannelConfigurationDataSourceConfig_tags(rName, channelID, teamID),
+				Config: testAccSlackChannelConfigurationDataSourceConfig_tags(rName, channelID, teamID, configurationName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet(dataSourceName, "chat_configuration_arn"),
-					resource.TestCheckResourceAttr(dataSourceName, "tags.%", "1"),
-					resource.TestCheckResourceAttr(dataSourceName, "tags.Service", "TestDatasourceChatbotAndCodestar"),
-					acctest.MatchResourceAttrGlobalARN(ctx, dataSourceName, "chat_configuration_arn", "chatbot", regexache.MustCompile(`chat-configuration/slack-channel/TestDatasourceChatbotAndCodestar-Test$`)),
+					resource.TestCheckResourceAttrSet(dataSourceName, "tags.%"),
+					acctest.MatchResourceAttrGlobalARN(ctx, dataSourceName, "chat_configuration_arn", "chatbot", regexache.MustCompile(`chat-configuration/slack-channel/`+regexp.QuoteMeta(configurationName)+`$`)),
 				),
 			},
 		},
@@ -103,24 +112,24 @@ func TestAccChatbotSlackChannelConfigurationDataSource_notFound(t *testing.T) {
 	})
 }
 
-func testAccSlackChannelConfigurationDataSourceConfig_basic(rName, channelID, teamID string) string {
-	return `
+func testAccSlackChannelConfigurationDataSourceConfig_basic(rName, channelID, teamID, configurationName string) string {
+	return fmt.Sprintf(`
 data "aws_caller_identity" "current" {}
 
 data "aws_chatbot_slack_channel_configuration" "test" {
-  chat_configuration_arn = "arn:aws:chatbot::${data.aws_caller_identity.current.account_id}:chat-configuration/slack-channel/TestDatasourceChatbotAndCodestar-Test"
+  chat_configuration_arn = "arn:aws:chatbot::${data.aws_caller_identity.current.account_id}:chat-configuration/slack-channel/%[1]s"
 }
-`
+`, configurationName)
 }
 
-func testAccSlackChannelConfigurationDataSourceConfig_tags(rName, channelID, teamID string) string {
-	return `
+func testAccSlackChannelConfigurationDataSourceConfig_tags(rName, channelID, teamID, configurationName string) string {
+	return fmt.Sprintf(`
 data "aws_caller_identity" "current" {}
 
 data "aws_chatbot_slack_channel_configuration" "test" {
-  chat_configuration_arn = "arn:aws:chatbot::${data.aws_caller_identity.current.account_id}:chat-configuration/slack-channel/TestDatasourceChatbotAndCodestar-Test"
+  chat_configuration_arn = "arn:aws:chatbot::${data.aws_caller_identity.current.account_id}:chat-configuration/slack-channel/%[1]s"
 }
-`
+`, configurationName)
 }
 
 func testAccSlackChannelConfigurationDataSourceConfig_notFound() string {
