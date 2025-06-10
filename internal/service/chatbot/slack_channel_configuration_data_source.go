@@ -17,7 +17,7 @@ import (
 	"github.com/hashicorp/terraform-provider-aws/internal/framework"
 	"github.com/hashicorp/terraform-provider-aws/internal/framework/flex"
 	fwtypes "github.com/hashicorp/terraform-provider-aws/internal/framework/types"
-	"github.com/hashicorp/terraform-provider-aws/internal/tags"
+	tftags "github.com/hashicorp/terraform-provider-aws/internal/tags"
 	"github.com/hashicorp/terraform-provider-aws/internal/tfresource"
 	"github.com/hashicorp/terraform-provider-aws/names"
 )
@@ -86,7 +86,7 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 				ElementType: types.StringType,
 				Computed:    true,
 			},
-			names.AttrTagsAll: tags.TagsAttributeComputedOnly(),
+			names.AttrTagsAll: tftags.TagsAttributeComputedOnly(),
 			"user_authorization_required": schema.BoolAttribute{
 				Description: "Enables use of a user role requirement in your chat configuration.",
 				Computed:    true,
@@ -124,11 +124,11 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 		for k, v := range keyValueTags(ctx, out.Tags).Map() {
 			elements[k] = types.StringValue(v)
 		}
-		tagMap, diags := tags.NewMapValue(elements)
+		tagMap, diags := tftags.NewMapValue(elements)
 		resp.Diagnostics.Append(diags...)
 		data.Tags = tagMap
 	} else {
-		data.Tags = tags.NewMapValueNull()
+		data.Tags = tftags.NewMapValueNull()
 	}
 
 	if len(out.SnsTopicArns) > 0 {
@@ -168,7 +168,7 @@ type dataSourceSlackChannelConfigurationModel struct {
 	SlackTeamName             types.String `tfsdk:"slack_team_name"`
 	SnsTopicArns              types.Set    `tfsdk:"sns_topic_arns"`
 	State                     types.String `tfsdk:"state"`
-	Tags                      tags.Map     `tfsdk:"tags"`
-	TagsAll                   tags.Map     `tfsdk:"tags_all"`
+	Tags                      tftags.Map   `tfsdk:"tags"`
+	TagsAll                   tftags.Map   `tfsdk:"tags_all"`
 	UserAuthorizationRequired types.Bool   `tfsdk:"user_authorization_required"`
 }
