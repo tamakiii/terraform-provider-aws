@@ -28,7 +28,6 @@ func TestAccChatbotSlackChannelConfigurationDataSource_basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.PreCheck(ctx, t)
-			acctest.PreCheckPartitionHasService(t, names.Chatbot)
 			testAccPreCheck(ctx, t)
 		},
 		ErrorCheck:               acctest.ErrorCheck(t, names.ChatbotServiceID),
@@ -70,7 +69,6 @@ func TestAccChatbotSlackChannelConfigurationDataSource_tags(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.PreCheck(ctx, t)
-			acctest.PreCheckPartitionHasService(t, names.Chatbot)
 			testAccPreCheck(ctx, t)
 		},
 		ErrorCheck:               acctest.ErrorCheck(t, names.ChatbotServiceID),
@@ -97,7 +95,6 @@ func TestAccChatbotSlackChannelConfigurationDataSource_notFound(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.PreCheck(ctx, t)
-			acctest.PreCheckPartitionHasService(t, names.Chatbot)
 		},
 		ErrorCheck:               acctest.ErrorCheck(t, names.ChatbotServiceID),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories,
