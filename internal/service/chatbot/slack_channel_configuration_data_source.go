@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/chatbot"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/chatbot/types"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -102,7 +103,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 		return
 	}
 
-	out, err := findSlackChannelConfigurationByARN(ctx, conn, data.ChatConfigurationArn.ValueString())
+	out, err := findSlackChannelConfigurationByARNForDataSource(ctx, conn, data.ChatConfigurationArn.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			create.ProblemStandardMessage(names.Chatbot, create.ErrActionReading, DSNameSlackChannelConfiguration, data.ChatConfigurationArn.ValueString(), err),
@@ -118,9 +119,15 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	}
 
 	if len(out.Tags) > 0 {
-		data.Tags = flex.FlattenFrameworkStringValueMap(ctx, keyValueTags(ctx, out.Tags).Map())
+		elements := make(map[string]attr.Value)
+		for k, v := range keyValueTags(ctx, out.Tags).Map() {
+			elements[k] = types.StringValue(v)
+		}
+		tagMap, diags := tags.NewMapValue(elements)
+		resp.Diagnostics.Append(diags...)
+		data.Tags = tagMap
 	} else {
-		data.Tags = types.MapNull(types.StringType)
+		data.Tags = tags.NewMapValueNull()
 	}
 
 	if len(out.SnsTopicArns) > 0 {
@@ -132,7 +139,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func findSlackChannelConfigurationByARN(ctx context.Context, conn *chatbot.Client, chatConfigurationArn string) (*awstypes.SlackChannelConfiguration, error) {
+func findSlackChannelConfigurationByARNForDataSource(ctx context.Context, conn *chatbot.Client, chatConfigurationArn string) (*awstypes.SlackChannelConfiguration, error) {
 	input := &chatbot.DescribeSlackChannelConfigurationsInput{
 		ChatConfigurationArn: aws.String(chatConfigurationArn),
 	}
