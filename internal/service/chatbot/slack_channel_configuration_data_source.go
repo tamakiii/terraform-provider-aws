@@ -6,18 +6,16 @@ package chatbot
 import (
 	"context"
 
-	"github.com/YakDriver/regexache"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/chatbot"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/chatbot/types"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-provider-aws/internal/create"
 	"github.com/hashicorp/terraform-provider-aws/internal/framework"
 	"github.com/hashicorp/terraform-provider-aws/internal/framework/flex"
+	fwtypes "github.com/hashicorp/terraform-provider-aws/internal/framework/types"
 	"github.com/hashicorp/terraform-provider-aws/internal/tfresource"
 	"github.com/hashicorp/terraform-provider-aws/names"
 )
@@ -42,13 +40,8 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 		Attributes: map[string]schema.Attribute{
 			"chat_configuration_arn": schema.StringAttribute{
 				Description: "ARN of the Slack channel configuration.",
+				CustomType:  fwtypes.ARNType,
 				Required:    true,
-				Validators: []validator.String{
-					stringvalidator.RegexMatches(
-						regexache.MustCompile(`^arn:aws[0-9a-zA-Z-]*:chatbot::[0-9]{12}:chat-configuration/slack-channel/.+$`),
-						"must be a valid AWS Chatbot Slack channel configuration ARN",
-					),
-				},
 			},
 			"configuration_name": schema.StringAttribute{
 				Description: "Name of the Slack channel configuration.",
@@ -112,7 +105,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	out, err := findSlackChannelConfigurationByArn(ctx, conn, data.ChatConfigurationArn.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
-			create.ProblemStandardMessage(names.Chatbot, create.ErrActionReading, DSNameSlackChannelConfiguration, data.ChatConfigurationArn.String(), err),
+			create.ProblemStandardMessage(names.Chatbot, create.ErrActionReading, DSNameSlackChannelConfiguration, data.ChatConfigurationArn.ValueString(), err),
 			err.Error(),
 		)
 		return
@@ -123,8 +116,6 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	data.ChatConfigurationArn = flex.StringToFramework(ctx, out.ChatConfigurationArn)
 
 	// Set tags if present
 	if len(out.Tags) > 0 {
@@ -173,7 +164,7 @@ func chatbotTagsToMap(tags []awstypes.Tag) map[string]string {
 }
 
 type dataSourceSlackChannelConfigurationModel struct {
-	ChatConfigurationArn      types.String `tfsdk:"chat_configuration_arn"`
+	ChatConfigurationArn      fwtypes.ARN  `tfsdk:"chat_configuration_arn"`
 	ConfigurationName         types.String `tfsdk:"configuration_name"`
 	IamRoleArn                types.String `tfsdk:"iam_role_arn"`
 	LoggingLevel              types.String `tfsdk:"logging_level"`
