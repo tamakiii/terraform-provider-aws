@@ -39,16 +39,16 @@ func TestAccChatbotSlackChannelConfigurationDataSource_basic(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrPair(dataSourceName, "chat_configuration_arn", resourceName, "chat_configuration_arn"),
 					resource.TestCheckResourceAttrPair(dataSourceName, "configuration_name", resourceName, "configuration_name"),
-					resource.TestCheckResourceAttrPair(dataSourceName, "iam_role_arn", resourceName, "iam_role_arn"),
+					resource.TestCheckResourceAttrPair(dataSourceName, names.AttrIAMRoleARN, resourceName, names.AttrIAMRoleARN),
 					resource.TestCheckResourceAttrPair(dataSourceName, "logging_level", resourceName, "logging_level"),
 					resource.TestCheckResourceAttrPair(dataSourceName, "slack_channel_id", resourceName, "slack_channel_id"),
 					resource.TestCheckResourceAttrPair(dataSourceName, "slack_channel_name", resourceName, "slack_channel_name"),
 					resource.TestCheckResourceAttrPair(dataSourceName, "slack_team_id", resourceName, "slack_team_id"),
 					resource.TestCheckResourceAttrPair(dataSourceName, "slack_team_name", resourceName, "slack_team_name"),
 					resource.TestCheckResourceAttrPair(dataSourceName, "user_authorization_required", resourceName, "user_authorization_required"),
-					resource.TestCheckResourceAttrPair(dataSourceName, "state", resourceName, "state"),
+					resource.TestCheckResourceAttrPair(dataSourceName, names.AttrState, resourceName, names.AttrState),
 					resource.TestCheckResourceAttrPair(dataSourceName, "sns_topic_arns", resourceName, "sns_topic_arns"),
-					resource.TestCheckResourceAttrPair(dataSourceName, "tags", resourceName, "tags"),
+					resource.TestCheckResourceAttrPair(dataSourceName, names.AttrTags, resourceName, names.AttrTags),
 					// Use GlobalARN matcher as Chatbot ARNs are global resources
 					acctest.MatchResourceAttrGlobalARN(ctx, dataSourceName, "chat_configuration_arn", "chatbot", regexache.MustCompile(fmt.Sprintf(`chat-configuration/slack-channel/%s$`, rName))),
 				),
@@ -79,10 +79,10 @@ func TestAccChatbotSlackChannelConfigurationDataSource_tags(t *testing.T) {
 				Config: testAccSlackChannelConfigurationDataSourceConfig_tags(rName, channelID, teamID),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrPair(dataSourceName, "chat_configuration_arn", resourceName, "chat_configuration_arn"),
-					resource.TestCheckResourceAttrPair(dataSourceName, "tags", resourceName, "tags"),
-					resource.TestCheckResourceAttr(dataSourceName, "tags.%", "2"),
-					resource.TestCheckResourceAttr(dataSourceName, "tags.key1", "value1"),
-					resource.TestCheckResourceAttr(dataSourceName, "tags.key2", "value2"),
+					resource.TestCheckResourceAttrPair(dataSourceName, names.AttrTags, resourceName, names.AttrTags),
+					resource.TestCheckResourceAttr(dataSourceName, acctest.CtTagsPercent, "2"),
+					resource.TestCheckResourceAttr(dataSourceName, acctest.CtTagsKey1, acctest.CtValue1),
+					resource.TestCheckResourceAttr(dataSourceName, acctest.CtTagsKey2, acctest.CtValue2),
 				),
 			},
 		},
@@ -116,7 +116,7 @@ data "aws_chatbot_slack_channel_configuration" "test" {
 }
 
 func testAccSlackChannelConfigurationDataSourceConfig_tags(rName, channelID, teamID string) string {
-	return acctest.ConfigCompose(testAccSlackChannelConfigurationConfig_tags1(rName, channelID, teamID, "key1", "value1"), `
+	return acctest.ConfigCompose(testAccSlackChannelConfigurationConfig_tags1(rName, channelID, teamID, acctest.CtKey1, acctest.CtValue1), `
 data "aws_chatbot_slack_channel_configuration" "test" {
   chat_configuration_arn = aws_chatbot_slack_channel_configuration.test.chat_configuration_arn
 }

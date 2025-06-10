@@ -46,7 +46,7 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 				Description: "Name of the Slack channel configuration.",
 				Computed:    true,
 			},
-			"iam_role_arn": schema.StringAttribute{
+			names.AttrIAMRoleARN: schema.StringAttribute{
 				Description: "ARN of the IAM role that defines the permissions for AWS Chatbot.",
 				Computed:    true,
 			},
@@ -75,11 +75,11 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 				ElementType: types.StringType,
 				Computed:    true,
 			},
-			"state": schema.StringAttribute{
+			names.AttrState: schema.StringAttribute{
 				Description: "State of the configuration.",
 				Computed:    true,
 			},
-			"tags": schema.MapAttribute{
+			names.AttrTags: schema.MapAttribute{
 				Description: "Map of tags assigned to the resource.",
 				ElementType: types.StringType,
 				Computed:    true,
