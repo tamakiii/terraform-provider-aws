@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/chatbot"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/chatbot/types"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -119,17 +118,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 		return
 	}
 
-	if len(out.Tags) > 0 {
-		elements := make(map[string]attr.Value)
-		for k, v := range keyValueTags(ctx, out.Tags).Map() {
-			elements[k] = types.StringValue(v)
-		}
-		tagMap, diags := tftags.NewMapValue(elements)
-		resp.Diagnostics.Append(diags...)
-		data.Tags = tagMap
-	} else {
-		data.Tags = tftags.NewMapValueNull()
-	}
+	setTagsOut(ctx, out.Tags)
 
 	if len(out.SnsTopicArns) > 0 {
 		data.SnsTopicArns = flex.FlattenFrameworkStringValueSetLegacy(ctx, out.SnsTopicArns)
