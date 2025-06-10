@@ -79,6 +79,7 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 			},
 			names.AttrState: schema.StringAttribute{
 				Description: "State of the configuration.",
+				CustomType:  fwtypes.StringEnumType[slackChannelConfigurationState](),
 				Computed:    true,
 			},
 			names.AttrTags:    tftags.TagsAttributeComputedOnly(),
@@ -138,17 +139,17 @@ func findSlackChannelConfigurationByARNForDataSource(ctx context.Context, conn *
 }
 
 type dataSourceSlackChannelConfigurationModel struct {
-	ChatConfigurationArn      fwtypes.ARN                      `tfsdk:"chat_configuration_arn"`
-	ConfigurationName         types.String                     `tfsdk:"configuration_name"`
-	IamRoleArn                types.String                     `tfsdk:"iam_role_arn"`
-	LoggingLevel              fwtypes.StringEnum[loggingLevel] `tfsdk:"logging_level"`
-	SlackChannelId            types.String                     `tfsdk:"slack_channel_id"`
-	SlackChannelName          types.String                     `tfsdk:"slack_channel_name"`
-	SlackTeamId               types.String                     `tfsdk:"slack_team_id"`
-	SlackTeamName             types.String                     `tfsdk:"slack_team_name"`
-	SnsTopicArns              fwtypes.SetValueOf[types.String] `tfsdk:"sns_topic_arns"`
-	State                     types.String                     `tfsdk:"state"`
-	Tags                      tftags.Map                       `tfsdk:"tags"`
-	TagsAll                   tftags.Map                       `tfsdk:"tags_all"`
-	UserAuthorizationRequired types.Bool                       `tfsdk:"user_authorization_required"`
+	ChatConfigurationArn      fwtypes.ARN                                        `tfsdk:"chat_configuration_arn"`
+	ConfigurationName         types.String                                       `tfsdk:"configuration_name"`
+	IamRoleArn                types.String                                       `tfsdk:"iam_role_arn"`
+	LoggingLevel              fwtypes.StringEnum[loggingLevel]                   `tfsdk:"logging_level"`
+	SlackChannelId            types.String                                       `tfsdk:"slack_channel_id"`
+	SlackChannelName          types.String                                       `tfsdk:"slack_channel_name"`
+	SlackTeamId               types.String                                       `tfsdk:"slack_team_id"`
+	SlackTeamName             types.String                                       `tfsdk:"slack_team_name"`
+	SnsTopicArns              fwtypes.SetValueOf[types.String]                   `tfsdk:"sns_topic_arns"`
+	State                     fwtypes.StringEnum[slackChannelConfigurationState] `tfsdk:"state"`
+	Tags                      tftags.Map                                         `tfsdk:"tags"`
+	TagsAll                   tftags.Map                                         `tfsdk:"tags_all"`
+	UserAuthorizationRequired types.Bool                                         `tfsdk:"user_authorization_required"`
 }
