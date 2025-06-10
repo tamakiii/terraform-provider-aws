@@ -38,6 +38,6 @@ This data source exports the following attributes in addition to the arguments a
 * `slack_team_id` - ID of the Slack workspace authorized with AWS Chatbot. For example, `T07EA123LEP`.
 * `slack_team_name` - Name of the Slack team.
 * `sns_topic_arns` - ARNs of the SNS topics that deliver notifications to AWS Chatbot.
-* `state` - State of the configuration.
+* `state` - State of the configuration. Either `ENABLED` or `DISABLED`.
 * `tags` - Map of tags assigned to the resource.
 * `user_authorization_required` - Enables use of a user role requirement in your chat configuration.
