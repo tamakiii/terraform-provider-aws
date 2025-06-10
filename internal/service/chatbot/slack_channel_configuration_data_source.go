@@ -101,7 +101,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 		return
 	}
 
-	out, err := findSlackChannelConfigurationByArn(ctx, conn, data.ChatConfigurationArn.ValueString())
+	out, err := findSlackChannelConfigurationByARN(ctx, conn, data.ChatConfigurationArn.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			create.ProblemStandardMessage(names.Chatbot, create.ErrActionReading, DSNameSlackChannelConfiguration, data.ChatConfigurationArn.ValueString(), err),
@@ -131,7 +131,7 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func findSlackChannelConfigurationByArn(ctx context.Context, conn *chatbot.Client, chatConfigurationArn string) (*awstypes.SlackChannelConfiguration, error) {
+func findSlackChannelConfigurationByARN(ctx context.Context, conn *chatbot.Client, chatConfigurationArn string) (*awstypes.SlackChannelConfiguration, error) {
 	input := &chatbot.DescribeSlackChannelConfigurationsInput{
 		ChatConfigurationArn: aws.String(chatConfigurationArn),
 	}
