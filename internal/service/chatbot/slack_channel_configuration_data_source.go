@@ -20,7 +20,6 @@ import (
 	"github.com/hashicorp/terraform-provider-aws/names"
 )
 
-// Function annotations are used for datasource registration to the Provider. DO NOT EDIT.
 // @FrameworkDataSource("aws_chatbot_slack_channel_configuration", name="Slack Channel Configuration")
 func newDataSourceSlackChannelConfiguration(context.Context) (datasource.DataSourceWithConfigure, error) {
 	return &dataSourceSlackChannelConfiguration{}, nil
@@ -117,14 +116,12 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 		return
 	}
 
-	// Set tags if present
 	if len(out.Tags) > 0 {
 		data.Tags = flex.FlattenFrameworkStringValueMap(ctx, keyValueTags(ctx, out.Tags).Map())
 	} else {
 		data.Tags = types.MapNull(types.StringType)
 	}
 
-	// Set SNS topic ARNs if present
 	if len(out.SnsTopicArns) > 0 {
 		data.SnsTopicArns = flex.FlattenFrameworkStringValueSetLegacy(ctx, out.SnsTopicArns)
 	} else {
