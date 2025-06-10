@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-provider-aws/internal/framework"
 	"github.com/hashicorp/terraform-provider-aws/internal/framework/flex"
 	fwtypes "github.com/hashicorp/terraform-provider-aws/internal/framework/types"
+	"github.com/hashicorp/terraform-provider-aws/internal/tags"
 	"github.com/hashicorp/terraform-provider-aws/internal/tfresource"
 	"github.com/hashicorp/terraform-provider-aws/names"
 )
@@ -159,6 +160,6 @@ type dataSourceSlackChannelConfigurationModel struct {
 	SlackTeamName             types.String `tfsdk:"slack_team_name"`
 	SnsTopicArns              types.Set    `tfsdk:"sns_topic_arns"`
 	State                     types.String `tfsdk:"state"`
-	Tags                      types.Map    `tfsdk:"tags"`
+	Tags                      tags.Map     `tfsdk:"tags"`
 	UserAuthorizationRequired types.Bool   `tfsdk:"user_authorization_required"`
 }
