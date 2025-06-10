@@ -239,7 +239,7 @@ resource "aws_chatbot_slack_channel_configuration" "test" {
 
   tags = {
     %[4]s = %[5]q
-    key2 = "value2"
+    key2  = "value2"
   }
 }
 `, rName, channelID, teamID, tagKey1, tagValue1)
