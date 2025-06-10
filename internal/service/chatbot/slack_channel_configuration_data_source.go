@@ -132,23 +132,20 @@ func (d *dataSourceSlackChannelConfiguration) Read(ctx context.Context, req data
 }
 
 func findSlackChannelConfigurationByArn(ctx context.Context, conn *chatbot.Client, chatConfigurationArn string) (*awstypes.SlackChannelConfiguration, error) {
-	input := &chatbot.DescribeSlackChannelConfigurationsInput{}
-
-	pages := chatbot.NewDescribeSlackChannelConfigurationsPaginator(conn, input)
-	for pages.HasMorePages() {
-		page, err := pages.NextPage(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, configuration := range page.SlackChannelConfigurations {
-			if aws.ToString(configuration.ChatConfigurationArn) == chatConfigurationArn {
-				return &configuration, nil
-			}
-		}
+	input := &chatbot.DescribeSlackChannelConfigurationsInput{
+		ChatConfigurationArn: aws.String(chatConfigurationArn),
 	}
 
-	return nil, tfresource.NewEmptyResultError(input)
+	output, err := conn.DescribeSlackChannelConfigurations(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(output.SlackChannelConfigurations) == 0 {
+		return nil, tfresource.NewEmptyResultError(input)
+	}
+
+	return &output.SlackChannelConfigurations[0], nil
 }
 
 type dataSourceSlackChannelConfigurationModel struct {
