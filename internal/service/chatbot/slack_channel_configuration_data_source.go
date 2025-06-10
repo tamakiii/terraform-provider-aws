@@ -86,6 +86,7 @@ func (d *dataSourceSlackChannelConfiguration) Schema(ctx context.Context, req da
 				ElementType: types.StringType,
 				Computed:    true,
 			},
+			names.AttrTagsAll: tags.TagsAttributeComputedOnly(),
 			"user_authorization_required": schema.BoolAttribute{
 				Description: "Enables use of a user role requirement in your chat configuration.",
 				Computed:    true,
@@ -168,5 +169,6 @@ type dataSourceSlackChannelConfigurationModel struct {
 	SnsTopicArns              types.Set    `tfsdk:"sns_topic_arns"`
 	State                     types.String `tfsdk:"state"`
 	Tags                      tags.Map     `tfsdk:"tags"`
+	TagsAll                   tags.Map     `tfsdk:"tags_all"`
 	UserAuthorizationRequired types.Bool   `tfsdk:"user_authorization_required"`
 }
